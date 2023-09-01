@@ -2,12 +2,14 @@
 
 namespace Mpdf\PsrHttpMessageShim;
 
+use Psr\Http\Message\UriInterface;
+
 /**
  * PSR-7 URI implementation ported from nyholm/psr7 and adapted for PHP 5.6
  *
  * @link https://github.com/Nyholm/psr7/blob/master/src/Uri.php
  */
-final class Uri implements \Psr\Http\Message\UriInterface
+final class Uri implements UriInterface
 {
 	private static $schemes = ['http' => 80, 'https' => 443];
 
@@ -57,17 +59,17 @@ final class Uri implements \Psr\Http\Message\UriInterface
 		}
 	}
 
-	public function __toString()
+	public function __toString(): string
 	{
 		return self::createUriString($this->scheme, $this->getAuthority(), $this->path, $this->query, $this->fragment);
 	}
 
-	public function getScheme()
+	public function getScheme(): string
 	{
 		return $this->scheme;
 	}
 
-	public function getAuthority()
+	public function getAuthority(): string
 	{
 		if ('' === $this->host) {
 			return '';
@@ -85,37 +87,37 @@ final class Uri implements \Psr\Http\Message\UriInterface
 		return $authority;
 	}
 
-	public function getUserInfo()
+	public function getUserInfo(): string
 	{
 		return $this->userInfo;
 	}
 
-	public function getHost()
+	public function getHost(): string
 	{
 		return $this->host;
 	}
 
-	public function getPort()
+	public function getPort(): ?int
 	{
 		return $this->port;
 	}
 
-	public function getPath()
+	public function getPath(): string
 	{
 		return $this->path;
 	}
 
-	public function getQuery()
+	public function getQuery(): string
 	{
 		return $this->query;
 	}
 
-	public function getFragment()
+	public function getFragment(): string
 	{
 		return $this->fragment;
 	}
 
-	public function withScheme($scheme)
+	public function withScheme(string $scheme): UriInterface
 	{
 		if (!\is_string($scheme)) {
 			throw new \InvalidArgumentException('Scheme must be a string');
@@ -132,7 +134,7 @@ final class Uri implements \Psr\Http\Message\UriInterface
 		return $new;
 	}
 
-	public function withUserInfo($user, $password = null)
+	public function withUserInfo(string $user, ?string $password = null): UriInterface
 	{
 		$info = $user;
 		if (null !== $password && '' !== $password) {
@@ -149,7 +151,7 @@ final class Uri implements \Psr\Http\Message\UriInterface
 		return $new;
 	}
 
-	public function withHost($host)
+	public function withHost(string $host): UriInterface
 	{
 		if (!\is_string($host)) {
 			throw new \InvalidArgumentException('Host must be a string');
@@ -165,7 +167,7 @@ final class Uri implements \Psr\Http\Message\UriInterface
 		return $new;
 	}
 
-	public function withPort($port)
+	public function withPort(?int $port): UriInterface
 	{
 		if ($this->port === $port = $this->filterPort($port)) {
 			return $this;
@@ -177,7 +179,7 @@ final class Uri implements \Psr\Http\Message\UriInterface
 		return $new;
 	}
 
-	public function withPath($path)
+	public function withPath(string $path): UriInterface
 	{
 		if ($this->path === $path = $this->filterPath($path)) {
 			return $this;
@@ -189,7 +191,7 @@ final class Uri implements \Psr\Http\Message\UriInterface
 		return $new;
 	}
 
-	public function withQuery($query)
+	public function withQuery(string $query): UriInterface
 	{
 		if ($this->query === $query = $this->filterQueryAndFragment($query)) {
 			return $this;
@@ -201,7 +203,7 @@ final class Uri implements \Psr\Http\Message\UriInterface
 		return $new;
 	}
 
-	public function withFragment($fragment)
+	public function withFragment(string $fragment): UriInterface
 	{
 		if ($this->fragment === $fragment = $this->filterQueryAndFragment($fragment)) {
 			return $this;
@@ -216,7 +218,7 @@ final class Uri implements \Psr\Http\Message\UriInterface
 	/**
 	 * Create a URI string from its various parts.
 	 */
-	private static function createUriString($scheme, $authority, $path, $query, $fragment)
+	private static function createUriString(string $scheme, string $authority, string $path, string $query, string $fragment): string
 	{
 		$uri = '';
 		if ('' !== $scheme) {
@@ -258,12 +260,12 @@ final class Uri implements \Psr\Http\Message\UriInterface
 	/**
 	 * Is a given port non-standard for the current scheme?
 	 */
-	private static function isNonStandardPort($scheme, $port)
+	private static function isNonStandardPort(string $scheme, int $port): bool
 	{
 		return !isset(self::$schemes[$scheme]) || $port !== self::$schemes[$scheme];
 	}
 
-	private function filterPort($port)
+	private function filterPort(int $port): ?bool
 	{
 		if (null === $port) {
 			return null;

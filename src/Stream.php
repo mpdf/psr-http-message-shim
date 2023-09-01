@@ -104,7 +104,7 @@ class Stream implements \Psr\Http\Message\StreamInterface
 		$this->close();
 	}
 
-	public function __toString()
+	public function __toString(): string
 	{
 		try {
 			if ($this->isSeekable()) {
@@ -117,7 +117,7 @@ class Stream implements \Psr\Http\Message\StreamInterface
 		}
 	}
 
-	public function close()
+	public function close(): void
 	{
 		if (isset($this->stream)) {
 			if (is_resource($this->stream)) {
@@ -141,14 +141,14 @@ class Stream implements \Psr\Http\Message\StreamInterface
 		return $result;
 	}
 
-	public function getSize()
+	public function getSize(): ?int
 	{
 		if ($this->size !== null) {
 			return $this->size;
 		}
 
 		if (!isset($this->stream)) {
-			return;
+			return null;
 		}
 
 		// Clear the stat cache if the stream has a URI
@@ -162,9 +162,10 @@ class Stream implements \Psr\Http\Message\StreamInterface
 
 			return $this->size;
 		}
+		return null;
 	}
 
-	public function tell()
+	public function tell(): int
 	{
 		$result = ftell($this->stream);
 
@@ -175,17 +176,17 @@ class Stream implements \Psr\Http\Message\StreamInterface
 		return $result;
 	}
 
-	public function eof()
+	public function eof(): bool
 	{
 		return !$this->stream || feof($this->stream);
 	}
 
-	public function isSeekable()
+	public function isSeekable(): bool
 	{
 		return $this->seekable;
 	}
 
-	public function seek($offset, $whence = SEEK_SET)
+	public function seek(int $offset, int $whence = SEEK_SET): void
 	{
 		if (!$this->seekable) {
 			throw new \RuntimeException('Stream is not seekable');
@@ -196,17 +197,17 @@ class Stream implements \Psr\Http\Message\StreamInterface
 		}
 	}
 
-	public function rewind()
+	public function rewind(): void
 	{
 		$this->seek(0);
 	}
 
-	public function isWritable()
+	public function isWritable(): bool
 	{
 		return $this->writable;
 	}
 
-	public function write($string)
+	public function write(string $string): int
 	{
 		if (!$this->writable) {
 			throw new \RuntimeException('Cannot write to a non-writable stream');
@@ -223,12 +224,12 @@ class Stream implements \Psr\Http\Message\StreamInterface
 		return $result;
 	}
 
-	public function isReadable()
+	public function isReadable(): bool
 	{
 		return $this->readable;
 	}
 
-	public function read($length)
+	public function read(int $length): string
 	{
 		if (!$this->readable) {
 			throw new \RuntimeException('Cannot read from non-readable stream');
@@ -237,7 +238,7 @@ class Stream implements \Psr\Http\Message\StreamInterface
 		return fread($this->stream, $length);
 	}
 
-	public function getContents()
+	public function getContents(): string
 	{
 		if (!isset($this->stream)) {
 			throw new \RuntimeException('Unable to read stream contents');
@@ -252,7 +253,7 @@ class Stream implements \Psr\Http\Message\StreamInterface
 		return $contents;
 	}
 
-	public function getMetadata($key = null)
+	public function getMetadata(?string $key = null): bool
 	{
 		if (!isset($this->stream)) {
 			return $key ? null : [];
