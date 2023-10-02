@@ -265,7 +265,7 @@ final class Uri implements UriInterface
 		return !isset(self::$schemes[$scheme]) || $port !== self::$schemes[$scheme];
 	}
 
-	private function filterPort(int $port): ?bool
+	private function filterPort(int $port): ?int
 	{
 		if (null === $port) {
 			return null;
